@@ -77,11 +77,6 @@ export function DepthPlane({ sceneTexture, depthTexture }) {
                     depthTest={false}
                 />
             </mesh>
-
-            <mesh >
-                <planeGeometry args={[1, 1]} />
-                <meshBasicMaterial/>
-            </mesh>
         </>
     )
 }
