@@ -24,7 +24,7 @@ export default function App() {
       <color attach="background" args={['#000']} />
       <CameraControls makeDefault />
 
-      <PostPipeline debug = {true}>
+      <PostPipeline debug useEffectMaterial>
         <TorusMesh />
       </PostPipeline>
 

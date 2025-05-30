@@ -1,0 +1,37 @@
+// src/component/DebugOverlay.jsx
+import { useThree, useFrame } from '@react-three/fiber'
+import { useRef } from 'react'
+import * as THREE from 'three'
+
+/**
+ * @param texture   要顯示的貼圖（THREE.Texture）
+ * @param sizePx    縮圖邊長（像素），預設 180
+ * @param offset    {x, y} 右下為正，預設 {x: 0, y: 0}
+ */
+export default function DebugOverlay({ texture, sizePx = 180, offset = { x: 0, y: 0 } }) {
+  const { size } = useThree()
+  const quad = useRef()
+
+  useFrame(() => {
+    const ndcW = (sizePx / size.width)  * 2
+    const ndcH = (sizePx / size.height) * 2
+    quad.current.scale.set(ndcW, ndcH, 1)
+    quad.current.position.set(
+      -1 + ndcW / 2 + (offset.x / size.width)  * 2,
+       1 - ndcH / 2 - (offset.y / size.height) * 2,
+      0
+    )
+  })
+
+  return (
+    <mesh ref={quad}>
+      <planeGeometry args={[1, 1]} />
+      <meshBasicMaterial
+        map={texture}
+        toneMapped={false}
+        depthTest={false}
+        transparent={false}
+      />
+    </mesh>
+  )
+}
