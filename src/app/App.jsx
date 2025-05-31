@@ -4,7 +4,6 @@ import PostPipeline from '../component/PostPipeline'
 import Utilities from '../r3f-gist/utility/Utilities'
 import fragmentShader from '../shader/test/fragment.glsl'
 import { CustomShaderMaterial } from '../r3f-gist/shader/CustomShaderMaterial'
-import { useEffect, useState } from 'react'
 
 function TorusMesh() {
     return (
@@ -16,17 +15,6 @@ function TorusMesh() {
 }
 
 export default function App() {
-    const [showDebug, setShowDebug] = useState(true)
-
-    /* 監聽鍵盤 D → toggle */
-    useEffect(() => {
-        const handler = (e) => {
-            if (e.key.toLowerCase() === 'd') setShowDebug((v) => !v)
-        }
-        window.addEventListener('keydown', handler)
-        return () => window.removeEventListener('keydown', handler)
-    }, [])
-
     return (
         <Canvas
             shadows
@@ -36,7 +24,7 @@ export default function App() {
             <color attach="background" args={['#000']} />
             <CameraControls makeDefault />
 
-            <PostPipeline debug={showDebug} useEffectMaterial>
+            <PostPipeline useEffectMaterial>
                 <TorusMesh />
             </PostPipeline>
 
