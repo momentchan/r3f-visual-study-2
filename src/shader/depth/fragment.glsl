@@ -61,9 +61,19 @@ void main() {
   float mapped = mix(segA, segB, step(dTest, normalizeDepth));
   mapped = clamp(mapped, 0.0, 1.0);
 
-  float wave = smoothstep(0.005, 0.0, abs(normalizeDepth - uWave));
+  float waveCount = 5.0;
+  float waveWidth = 0.01; 
+  float waveSpacing = 0.3; 
 
-  mapped += wave;
+  float waveSum = 0.0;
+
+  for(float i = 0.0; i < waveCount; i += 1.0) {
+    float waveCenter = mod(uWave + i * waveSpacing, 1.0);
+    waveSum += smoothstep(waveWidth, 0.0, abs(normalizeDepth - waveCenter));
+  }
+
+  waveSum = clamp(waveSum, 0.0, 1.0);
+  mapped += waveSum;
 
   vec3 baseColor = mix(uColorNear, uColorFar, mapped);
   vec3 gradientColor = texture2D(uGradientTex, vec2(mapped, 0.5)).rgb;

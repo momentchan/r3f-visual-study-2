@@ -29,24 +29,25 @@ export default function App() {
     return (
         <Canvas
             shadows
-            camera={{ fov: 45, near: 0.001, far: 3, position: [4, 2, 6] }}
+            camera={{ fov: 45, near: 0.001, far: 0.5, position: [0, 0.4, 0.4] }}
             gl={{ preserveDrawingBuffer: true }}
         >
             <color attach="background" args={['#000']} />
             <CameraControls makeDefault />
 
             <PostPipeline useEffectMaterial>
-                 <Model path={'Astronaut.fbx'} pos={[0, 0, 0]} />
+                <directionalLight
+                    position={[2, 4, 2]}
+                    intensity={1.5}
+                    castShadow
+                    shadow-mapSize-width={1024}
+                    shadow-mapSize-height={1024}
+                    shadow-bias={-0.0001}
+                />
+                <ambientLight intensity={1} />
+                <Model path={'Astronaut.fbx'} pos={[0, 0, 0]} />
                 {/* <TorusMesh /> */}
             </PostPipeline>
-
-            {/* <EffectComposer>
-                <Bloom
-                    luminanceThreshold={0.1}
-                    luminanceSmoothing={0.9}
-                    intensity={0.5} />
-            </EffectComposer> */}
-
             <Utilities />
         </Canvas>
     )

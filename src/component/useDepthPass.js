@@ -4,7 +4,7 @@ import fullVS from '../shader/fullscreen.glsl'
 import depthFS from '../shader/depth/fragment.glsl'
 import { useTexture } from '@react-three/drei'
 
-export default function useDepthPass({ depthTex, cfg, size, fbo }) {
+export default function useDepthPass({ depthTex, cfg, size, fbo,wave }) {
   const tex = useTexture('./Gradient.png')
   
   const mat = useMemo(() => new THREE.ShaderMaterial({
@@ -24,7 +24,7 @@ export default function useDepthPass({ depthTex, cfg, size, fbo }) {
       uColorNear: { value: new THREE.Color(cfg.colorNear) },
       uColorFar: { value: new THREE.Color(cfg.colorFar) },
       uDepthValue: { value: cfg.depthValue },
-      uWave: { value: cfg.wave }
+      uWave: { value: 0 }, // Initialize wave uniform
     },
     name: 'DepthPassMaterial'
   }), [depthTex])
@@ -47,7 +47,7 @@ export default function useDepthPass({ depthTex, cfg, size, fbo }) {
     uni.uColorFar.value.set(cfg.colorFar)
     uni.uDepthThres.value = cfg.depthThres
     uni.uDepthValue.value = cfg.depthValue
-    uni.uWave.value = cfg.wave
+    
 
     renderer.setRenderTarget(fbo)
     renderer.clear()
