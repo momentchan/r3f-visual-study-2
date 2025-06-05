@@ -14,10 +14,12 @@ export default function PostPipeline({ children, useEffectMaterial = false }) {
 
     /* 🎛  CENTRAL UI  ─────────────────────────────────────────── */
     const depthCfg = useControls('Depth FX', {
-        blurNear: { value: 0.01, min: 0, max: 50, step: 0.01 },
-        blurFar: { value: 0.01, min: 0, max: 50, step: 0.01 },
-        depthMin: { value: 0.1, min: 0, max: 1, step: 0.01 },
-        depthMax: { value: 0.2, min: 0, max: 1, step: 0.01 },
+        blurNear: { value: 0.01, min: 0, max: 50, step: 0.001 },
+        blurFar: { value: 0.01, min: 0, max: 50, step: 0.001 },
+        depthMin: { value: 0.1, min: 0, max: 1, step: 0.001 },
+        depthMax: { value: 0.2, min: 0, max: 1, step: 0.001 },
+        depthThres: { value: 0.2, min: 0, max: 1, step: 0.001 },
+        depthValue: { value: 0.5, min: 0, max: 1, step: 0.001 },
         tint: '#ffffff',
         colorNear: '#000000',
         colorFar: '#ffffff'

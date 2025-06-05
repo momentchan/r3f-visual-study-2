@@ -15,13 +15,15 @@ export default function useDepthPass({ depthTex, cfg, size, fbo }) {
       uResolution: { value: new THREE.Vector2(size.width, size.height) },
       uCameraNear: { value: cfg.near },
       uCameraFar: { value: cfg.far },
+      uDepthThres: { value: cfg.depthThres },
       uBlurNear: { value: cfg.blurNear },
       uBlurFar: { value: cfg.blurFar },
       uDepthRange: { value: new THREE.Vector2(cfg.depthMin, cfg.depthMax) },
       uColor: { value: new THREE.Color(cfg.tint) },
       uGradientTex: { value: tex },
       uColorNear: { value: new THREE.Color(cfg.colorNear) },
-      uColorFar: { value: new THREE.Color(cfg.colorFar) }
+      uColorFar: { value: new THREE.Color(cfg.colorFar) },
+      uDepthValue: { value: cfg.depthValue }
     },
     name: 'DepthPassMaterial'
   }), [depthTex])
@@ -42,6 +44,8 @@ export default function useDepthPass({ depthTex, cfg, size, fbo }) {
     uni.uGradientTex.value = tex
     uni.uColorNear.value.set(cfg.colorNear)
     uni.uColorFar.value.set(cfg.colorFar)
+    uni.uDepthThres.value = cfg.depthThres
+    uni.uDepthValue.value = cfg.depthValue
 
     renderer.setRenderTarget(fbo)
     renderer.clear()
