@@ -1,9 +1,9 @@
 precision highp float;
 
-uniform sampler2D tDepth;      
+uniform sampler2D tDepth;
 uniform sampler2D uGradientTex;
 
-uniform vec2 uResolution;      
+uniform vec2 uResolution;
 uniform float uCameraNear;
 uniform float uCameraFar;
 uniform float uBlurNear;
@@ -11,10 +11,12 @@ uniform float uBlurFar;
 uniform float uDepthThres;
 uniform float uDepthValue;
 
-uniform vec2 uDepthRange;      
-uniform vec3 uColorNear;        
-uniform vec3 uColorFar;        
-uniform float uGradientMix;     
+uniform vec2 uDepthRange;
+uniform vec3 uColorNear;
+uniform vec3 uColorFar;
+uniform float uGradientMix;
+
+uniform float uWave;
 
 varying vec2 vUv;
 
@@ -51,12 +53,17 @@ void main() {
 
   float blurred = sum / total;
   float depth = clamp(blurred / uCameraFar, 0.0, 1.0);
+  float normalizeDepth = clamp((depth - uDepthRange.x) / (uDepthRange.y - uDepthRange.x), 0.0, 1.0); // Updated
 
   float dTest = mix(uDepthRange.x, uDepthRange.y, uDepthThres);
-  float segA = uDepthValue * (depth - uDepthRange.x) / (dTest - uDepthRange.x);
-  float segB = uDepthValue + (1.0 - uDepthValue) * (depth - dTest) / (uDepthRange.y - dTest);
-  float mapped = mix(segA, segB, step(dTest, depth));
+  float segA = uDepthValue * (normalizeDepth - uDepthRange.x) / (dTest - uDepthRange.x);
+  float segB = uDepthValue + (1.0 - uDepthValue) * (normalizeDepth - dTest) / (uDepthRange.y - dTest);
+  float mapped = mix(segA, segB, step(dTest, normalizeDepth));
   mapped = clamp(mapped, 0.0, 1.0);
+
+  float wave = smoothstep(0.005, 0.0, abs(normalizeDepth - uWave));
+
+  mapped += wave;
 
   vec3 baseColor = mix(uColorNear, uColorFar, mapped);
   vec3 gradientColor = texture2D(uGradientTex, vec2(mapped, 0.5)).rgb;

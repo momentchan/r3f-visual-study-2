@@ -20,6 +20,7 @@ export default function PostPipeline({ children, useEffectMaterial = false }) {
         depthMax: { value: 0.2, min: 0, max: 1, step: 0.001 },
         depthThres: { value: 0.2, min: 0, max: 1, step: 0.001 },
         depthValue: { value: 0.5, min: 0, max: 1, step: 0.001 },
+        wave: { value: 0.5, min: 0, max: 1, step: 0.001 },
         tint: '#ffffff',
         colorNear: '#000000',
         colorFar: '#ffffff'

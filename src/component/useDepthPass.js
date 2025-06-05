@@ -23,7 +23,8 @@ export default function useDepthPass({ depthTex, cfg, size, fbo }) {
       uGradientTex: { value: tex },
       uColorNear: { value: new THREE.Color(cfg.colorNear) },
       uColorFar: { value: new THREE.Color(cfg.colorFar) },
-      uDepthValue: { value: cfg.depthValue }
+      uDepthValue: { value: cfg.depthValue },
+      uWave: { value: cfg.wave }
     },
     name: 'DepthPassMaterial'
   }), [depthTex])
@@ -46,6 +47,7 @@ export default function useDepthPass({ depthTex, cfg, size, fbo }) {
     uni.uColorFar.value.set(cfg.colorFar)
     uni.uDepthThres.value = cfg.depthThres
     uni.uDepthValue.value = cfg.depthValue
+    uni.uWave.value = cfg.wave
 
     renderer.setRenderTarget(fbo)
     renderer.clear()
