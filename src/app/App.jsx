@@ -29,7 +29,7 @@ export default function App() {
     return (
         <Canvas
             shadows
-            camera={{ fov: 45, near: 0.001, far: 0.5, position: [0, 0.4, 0.4] }}
+            camera={{ fov: 60, near: 0.001, far: 0.5, position: [0, 0, 0.3] }}
             gl={{ preserveDrawingBuffer: true }}
         >
             <color attach="background" args={['#000']} />
@@ -45,7 +45,7 @@ export default function App() {
                     shadow-bias={-0.0001}
                 />
                 <ambientLight intensity={1} />
-                <Model path={'Astronaut.fbx'} pos={[0, 0, 0]} />
+                <Model path={'Astronaut.fbx'} pos={[0, -0.075, 0]} />
                 {/* <TorusMesh /> */}
             </PostPipeline>
             <Utilities />

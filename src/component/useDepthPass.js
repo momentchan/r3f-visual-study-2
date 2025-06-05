@@ -4,9 +4,9 @@ import fullVS from '../shader/fullscreen.glsl'
 import depthFS from '../shader/depth/fragment.glsl'
 import { useTexture } from '@react-three/drei'
 
-export default function useDepthPass({ depthTex, cfg, size, fbo,wave }) {
+export default function useDepthPass({ depthTex, cfg, size, fbo }) {
   const tex = useTexture('./Gradient.png')
-  
+
   const mat = useMemo(() => new THREE.ShaderMaterial({
     vertexShader: fullVS,
     fragmentShader: depthFS,
@@ -19,7 +19,7 @@ export default function useDepthPass({ depthTex, cfg, size, fbo,wave }) {
       uBlurNear: { value: cfg.blurNear },
       uBlurFar: { value: cfg.blurFar },
       uDepthRange: { value: new THREE.Vector2(cfg.depthMin, cfg.depthMax) },
-      uColor: { value: new THREE.Color(cfg.tint) },
+      uWaveColor: { value: new THREE.Color(cfg.waveColor) },
       uGradientTex: { value: tex },
       uColorNear: { value: new THREE.Color(cfg.colorNear) },
       uColorFar: { value: new THREE.Color(cfg.colorFar) },
@@ -38,7 +38,7 @@ export default function useDepthPass({ depthTex, cfg, size, fbo,wave }) {
     uni.uBlurNear.value = cfg.blurNear
     uni.uBlurFar.value = cfg.blurFar
     uni.uDepthRange.value.set(cfg.depthMin, cfg.depthMax)
-    uni.uColor.value.set(cfg.tint)
+    uni.uWaveColor.value.set(cfg.waveColor)
     uni.uCameraNear.value = cfg.near
     uni.uCameraFar.value = cfg.far
     uni.uResolution.value.set(size.width, size.height)
@@ -47,7 +47,7 @@ export default function useDepthPass({ depthTex, cfg, size, fbo,wave }) {
     uni.uColorFar.value.set(cfg.colorFar)
     uni.uDepthThres.value = cfg.depthThres
     uni.uDepthValue.value = cfg.depthValue
-    
+
 
     renderer.setRenderTarget(fbo)
     renderer.clear()

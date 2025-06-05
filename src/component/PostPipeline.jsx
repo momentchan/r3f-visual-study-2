@@ -16,11 +16,11 @@ export default function PostPipeline({ children, useEffectMaterial = false }) {
     const depthCfg = useControls('Depth FX', {
         blurNear: { value: 0.01, min: 0, max: 50, step: 0.001 },
         blurFar: { value: 0.01, min: 0, max: 50, step: 0.001 },
-        depthMin: { value: 0.4, min: 0, max: 1, step: 0.001 },
+        depthMin: { value: 0.23, min: 0, max: 1, step: 0.001 },
         depthMax: { value: 1, min: 0, max: 1, step: 0.001 },
         depthThres: { value: 0.2, min: 0, max: 1, step: 0.001 },
         depthValue: { value: 0.5, min: 0, max: 1, step: 0.001 },
-        tint: '#ffffff',
+        waveColor: '#ffffff',
         colorNear: '#000000',
         colorFar: '#ffffff'
     })
@@ -44,7 +44,7 @@ export default function PostPipeline({ children, useEffectMaterial = false }) {
 
         if (elapsedRef.current >= durationRef.current) {
             elapsedRef.current = 0;
-            directionRef.current *= -1;
+            // directionRef.current *= -1;
             durationRef.current = 8; // 新的 duration: 2～5秒
         }
 

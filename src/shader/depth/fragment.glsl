@@ -12,11 +12,14 @@ uniform float uDepthThres;
 uniform float uDepthValue;
 
 uniform vec2 uDepthRange;
+
 uniform vec3 uColorNear;
 uniform vec3 uColorFar;
-uniform float uGradientMix;
 
 uniform float uWave;
+uniform vec3 uWaveColor;
+
+uniform float uGradientMix;
 
 varying vec2 vUv;
 
@@ -62,7 +65,7 @@ void main() {
   mapped = clamp(mapped, 0.0, 1.0);
 
   float waveCount = 5.0;
-  float waveWidth = 0.01; 
+  float waveWidth = 0.03; 
   float waveSpacing = 0.3; 
 
   float waveSum = 0.0;
@@ -73,9 +76,10 @@ void main() {
   }
 
   waveSum = clamp(waveSum, 0.0, 1.0);
-  mapped += waveSum;
 
   vec3 baseColor = mix(uColorNear, uColorFar, mapped);
+  baseColor += uWaveColor * waveSum;
+
   vec3 gradientColor = texture2D(uGradientTex, vec2(mapped, 0.5)).rgb;
   vec3 finalColor = mix(baseColor, gradientColor, uGradientMix);
 
