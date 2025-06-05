@@ -6,7 +6,6 @@ import useDepthPass from './useDepthPass'
 import useCompositePass from './useCompositePass'
 import { useFBO } from '@react-three/drei'
 import * as THREE from 'three'
-import { EffectComposer, Noise, Bloom, Vignette } from '@react-three/postprocessing'
 
 export default function PostPipeline({ children, useEffectMaterial = false }) {
 
@@ -71,6 +70,7 @@ export default function PostPipeline({ children, useEffectMaterial = false }) {
         effectTex: useEffectMaterial ? fboFX.texture : fboScene.texture,
         blend,
         size,
+        depthTex: fboScene.depthTexture,
     })
 
     /* Chain */

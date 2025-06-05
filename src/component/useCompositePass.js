@@ -21,7 +21,8 @@ export default function useCompositePass({
     blend,
     sizePx = 180,
     size,
-    debugOnStart = true
+    debugOnStart = true,
+    depthTex
 }) {
     const [showDebug, setShowDebug] = useState(true)
 
@@ -55,6 +56,7 @@ export default function useCompositePass({
 
 
     const dbgRef = useRef(null)
+    const depthDbgRef = useRef(null)
 
     useEffect(() => {
         /* remove old debug quad (if any) */
@@ -63,6 +65,13 @@ export default function useCompositePass({
             dbgRef.current.geometry.dispose()
             dbgRef.current.material.dispose()
             dbgRef.current = null
+        }
+
+        if (depthDbgRef.current) {
+            scene.remove(depthDbgRef.current)
+            depthDbgRef.current.geometry.dispose()
+            depthDbgRef.current.material.dispose()
+            depthDbgRef.current = null
         }
 
         if (showDebug) {
@@ -75,6 +84,44 @@ export default function useCompositePass({
             quad.renderOrder = 1
             scene.add(quad)
             dbgRef.current = quad
+
+            if (depthTex) {
+                const depthMat = new THREE.ShaderMaterial({
+                    vertexShader: `varying vec2 vUv;
+                        void main() {
+                        vUv = uv;
+                        gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0); // ✅ 正確考慮 camera + object transform
+                        }`,
+                    fragmentShader: `
+                        uniform sampler2D tDepth;
+                        uniform float uCameraNear;
+                        uniform float uCameraFar;
+                        varying vec2 vUv;
+
+                        float linearizeDepth(float z) {
+                            float ndc = z * 2.0 - 1.0;
+                            return (2.0 * uCameraNear * uCameraFar) / (uCameraFar + uCameraNear - ndc * (uCameraFar - uCameraNear));
+                        }
+
+                        void main() {
+                            float raw = texture2D(tDepth, vUv).r;
+                            float linear = 1.0 - linearizeDepth(raw) / uCameraFar; // normalize
+                            gl_FragColor = vec4(vec3(linear), 1.0);
+                        }
+                        `,
+                    uniforms: {
+                        tDepth: { value: depthTex },
+                        uCameraNear: { value: 0.1 }, // default, can update later
+                        uCameraFar: { value: 100.0 }
+                    },
+                    toneMapped: false
+                })
+
+                const depthQuad = new THREE.Mesh(new THREE.PlaneGeometry(1, 1), depthMat)
+                depthQuad.renderOrder = 1
+                scene.add(depthQuad)
+                depthDbgRef.current = depthQuad
+            }
         }
     }, [showDebug, sceneTex, scene])
 
@@ -83,15 +130,25 @@ export default function useCompositePass({
     /* ————————————————— public render() ————————————————— */
     const render = (renderer, _camera /* unused */, target = null) => {
         /* 1️⃣ live-update blend without reconstructing material */
-        material.uniforms.uBlend.value = blend    
+        material.uniforms.uBlend.value = blend
 
+        const border = 0.01 // 1px border
 
-        /* 2️⃣ position/scale debug quad */
         if (dbgRef.current) {
-            const ndcW = (sizePx / size.width) * 2
             const ndcH = (sizePx / size.height) * 2
+            const ndcW = (sizePx / size.height) * 2
+
             dbgRef.current.scale.set(ndcW, ndcH, 1)
-            dbgRef.current.position.set(-1 + ndcW / 2, 1 - ndcH / 2, 0)
+            dbgRef.current.position.set(border + -1 + ndcW / 2, 1 - ndcH / 2 - border, 0)
+        }
+
+
+        if (depthDbgRef.current) {
+            const ndcH = (sizePx / size.height) * 2
+            const ndcW = (sizePx / size.height) * 2
+
+            depthDbgRef.current.scale.set(ndcW, ndcH, 1)
+            depthDbgRef.current.position.set(border + -1 + ndcW / 2, 1 - ndcH * 3/ 2 -border * 2, 0)
         }
 
         /* 3️⃣ draw */
